@@ -1,0 +1,5 @@
+{
+  "name": "AGOIN Registro de Jornada",
+  "description": "Una aplicación web para el registro de la jornada laboral de los trabajadores de AGOIN, cumpliendo con la normativa española. Permite gestionar trabajadores, generar registros mensuales automáticos, editar horas y preparar los informes para imprimir.",
+  "requestFramePermissions": []
+}
