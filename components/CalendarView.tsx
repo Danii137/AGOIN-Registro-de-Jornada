@@ -6,13 +6,14 @@ import { SPANISH_HOLIDAYS_2025 } from '../constants';
 interface CalendarViewProps {
   logData: LogEntry[];
   selectedDate: { month: number; year: number };
+  showBreakFields: boolean;
   onToggleDay: (day: number) => void;
   onTimeChange: (day: number, field: 'entry' | 'stop' | 'comeback' | 'exit', value: string) => void;
   onTickChange: (day: number, field: 'entry' | 'stop' | 'comeback' | 'exit', isChecked: boolean) => void;
   onExtraHoursChange: (day: number, value: string) => void;
 }
 
-const CalendarView: React.FC<CalendarViewProps> = ({ logData, selectedDate, onToggleDay, onTimeChange, onTickChange, onExtraHoursChange }) => {
+const CalendarView: React.FC<CalendarViewProps> = ({ logData, selectedDate, showBreakFields, onToggleDay, onTimeChange, onTickChange, onExtraHoursChange }) => {
   const { year, month } = selectedDate;
   const [expandedDay, setExpandedDay] = useState<number | null>(null);
 
@@ -85,6 +86,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ logData, selectedDate, onTo
                 selectedDate={selectedDate}
                 isWeekend={isWeekend}
                 isHoliday={isHoliday}
+                showBreakFields={showBreakFields}
                 isExpanded={true} // Always expanded on desktop
                 onToggle={onToggleDay}
                 onTimeChange={onTimeChange}
@@ -113,6 +115,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ logData, selectedDate, onTo
                 selectedDate={selectedDate}
                 isWeekend={isWeekend}
                 isHoliday={isHoliday}
+                showBreakFields={showBreakFields}
                 isExpanded={expandedDay === entry.day}
                 onToggle={onToggleDay}
                 onTimeChange={onTimeChange}

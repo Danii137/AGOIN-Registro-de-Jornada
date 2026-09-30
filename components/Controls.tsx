@@ -12,6 +12,7 @@ interface ControlsProps {
   onDownloadPdf: () => void;
   isDownloadingPdf: boolean;
   onManageWorkers: () => void;
+  onAddWorker: () => void;
   includeSignature: boolean;
   onIncludeSignatureChange: (include: boolean) => void;
 }
@@ -27,6 +28,7 @@ const Controls: React.FC<ControlsProps> = ({
   onDownloadPdf,
   isDownloadingPdf,
   onManageWorkers,
+  onAddWorker,
   includeSignature,
   onIncludeSignatureChange
 }) => {
@@ -57,6 +59,11 @@ const Controls: React.FC<ControlsProps> = ({
               ))}
             </select>
             <button onClick={onManageWorkers} className="ml-2 mt-1 px-3 py-2 bg-agoin-teal text-white rounded-md hover:bg-opacity-90 text-sm flex-shrink-0 transition-colors">Gestionar</button>
+            <button onClick={onAddWorker} className="ml-2 mt-1 px-3 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm flex-shrink-0 transition-colors" title="Añadir nuevo trabajador">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                </svg>
+            </button>
           </div>
         </div>
         
@@ -93,7 +100,7 @@ const Controls: React.FC<ControlsProps> = ({
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center sm:justify-end gap-2 md:col-span-2 lg:col-span-1">
             <div className='flex gap-2 flex-grow'>
-              <button onClick={onGenerate} className="w-full px-4 py-2 bg-agoin-green text-white rounded-md hover:bg-opacity-90 transition">Generar</button>
+
               <button onClick={onClear} className="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-500 transition">Limpiar</button>
             </div>
           <div className="flex items-center justify-center sm:justify-end gap-2 sm:border-l border-gray-700 sm:ml-2 sm:pl-2 mt-2 sm:mt-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-700">

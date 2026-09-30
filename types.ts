@@ -5,6 +5,7 @@ export interface Worker {
   dni: string;
   contractHours: number;
   signature?: string;
+  hasBreak?: boolean;
   standardEntry?: string;
   standardStop?: string;
   standardComeback?: string;

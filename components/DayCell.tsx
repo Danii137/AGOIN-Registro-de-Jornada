@@ -6,6 +6,7 @@ interface DayCellProps {
   selectedDate: { month: number; year: number };
   isWeekend: boolean;
   isHoliday: boolean;
+  showBreakFields: boolean;
   isExpanded: boolean;
   onToggle: (day: number) => void;
   onTimeChange: (day: number, field: 'entry' | 'stop' | 'comeback' | 'exit', value: string) => void;
@@ -14,7 +15,7 @@ interface DayCellProps {
   onExpand: (day: number) => void;
 }
 
-const DayCell: React.FC<DayCellProps> = ({ entry, selectedDate, isWeekend, isHoliday, isExpanded, onToggle, onTimeChange, onTickChange, onExtraHoursChange, onExpand }) => {
+const DayCell: React.FC<DayCellProps> = ({ entry, selectedDate, isWeekend, isHoliday, showBreakFields, isExpanded, onToggle, onTimeChange, onTickChange, onExtraHoursChange, onExpand }) => {
   const { day, enabled } = entry;
   
   const bgColor = !enabled
@@ -50,27 +51,31 @@ const DayCell: React.FC<DayCellProps> = ({ entry, selectedDate, isWeekend, isHol
           </div>
           {enabled && (
             <div className="space-y-1 text-gray-300">
-               <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between">
                     <label className="text-xxs font-medium">Entrada:</label>
                     <div className="flex items-center gap-1.5">
                         <input type="time" value={entry.entry} onChange={(e) => onTimeChange(day, 'entry', e.target.value)} className={timeInputStyles} />
                         <input type="checkbox" checked={entry.entryTick} onChange={(e) => onTickChange(day, 'entry', e.target.checked)} className={tickInputStyles}/>
                     </div>
                 </div>
-                <div className="flex items-center justify-between">
-                    <label className="text-xxs font-medium">Parada:</label>
-                    <div className="flex items-center gap-1.5">
-                        <input type="time" value={entry.stop} onChange={(e) => onTimeChange(day, 'stop', e.target.value)} className={timeInputStyles} />
-                        <input type="checkbox" checked={entry.stopTick} onChange={(e) => onTickChange(day, 'stop', e.target.checked)} className={tickInputStyles}/>
-                    </div>
-                </div>
-                <div className="flex items-center justify-between">
-                    <label className="text-xxs font-medium">Regreso:</label>
-                    <div className="flex items-center gap-1.5">
-                        <input type="time" value={entry.comeback} onChange={(e) => onTimeChange(day, 'comeback', e.target.value)} className={timeInputStyles} />
-                        <input type="checkbox" checked={entry.comebackTick} onChange={(e) => onTickChange(day, 'comeback', e.target.checked)} className={tickInputStyles}/>
-                    </div>
-                </div>
+                {showBreakFields && (
+                    <>
+                        <div className="flex items-center justify-between">
+                            <label className="text-xxs font-medium">Parada:</label>
+                            <div className="flex items-center gap-1.5">
+                                <input type="time" value={entry.stop} onChange={(e) => onTimeChange(day, 'stop', e.target.value)} className={timeInputStyles} />
+                                <input type="checkbox" checked={entry.stopTick} onChange={(e) => onTickChange(day, 'stop', e.target.checked)} className={tickInputStyles}/>
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <label className="text-xxs font-medium">Regreso:</label>
+                            <div className="flex items-center gap-1.5">
+                                <input type="time" value={entry.comeback} onChange={(e) => onTimeChange(day, 'comeback', e.target.value)} className={timeInputStyles} />
+                                <input type="checkbox" checked={entry.comebackTick} onChange={(e) => onTickChange(day, 'comeback', e.target.checked)} className={tickInputStyles}/>
+                            </div>
+                        </div>
+                    </>
+                )}
                 <div className="flex items-center justify-between">
                     <label className="text-xxs font-medium">Salida:</label>
                     <div className="flex items-center gap-1.5">
@@ -115,27 +120,31 @@ const DayCell: React.FC<DayCellProps> = ({ entry, selectedDate, isWeekend, isHol
         </div>
         {isExpanded && enabled && (
              <div className="p-3 bg-agoin-darker/50 space-y-2">
-               <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between">
                     <label className="text-sm font-medium">Entrada:</label>
                     <div className="flex items-center gap-2">
                         <input type="time" value={entry.entry} onChange={(e) => onTimeChange(day, 'entry', e.target.value)} className={timeInputStyles.replace('w-16','w-24')} />
                         <input type="checkbox" checked={entry.entryTick} onChange={(e) => onTickChange(day, 'entry', e.target.checked)} className={tickInputStyles.replace('h-3 w-3','h-4 w-4')}/>
                     </div>
                 </div>
-                <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">Parada:</label>
-                    <div className="flex items-center gap-2">
-                        <input type="time" value={entry.stop} onChange={(e) => onTimeChange(day, 'stop', e.target.value)} className={timeInputStyles.replace('w-16','w-24')} />
-                        <input type="checkbox" checked={entry.stopTick} onChange={(e) => onTickChange(day, 'stop', e.target.checked)} className={tickInputStyles.replace('h-3 w-3','h-4 w-4')}/>
-                    </div>
-                </div>
-                <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium">Regreso:</label>
-                    <div className="flex items-center gap-2">
-                        <input type="time" value={entry.comeback} onChange={(e) => onTimeChange(day, 'comeback', e.target.value)} className={timeInputStyles.replace('w-16','w-24')} />
-                        <input type="checkbox" checked={entry.comebackTick} onChange={(e) => onTickChange(day, 'comeback', e.target.checked)} className={tickInputStyles.replace('h-3 w-3','h-4 w-4')}/>
-                    </div>
-                </div>
+                {showBreakFields && (
+                    <>
+                        <div className="flex items-center justify-between">
+                            <label className="text-sm font-medium">Parada:</label>
+                            <div className="flex items-center gap-2">
+                                <input type="time" value={entry.stop} onChange={(e) => onTimeChange(day, 'stop', e.target.value)} className={timeInputStyles.replace('w-16','w-24')} />
+                                <input type="checkbox" checked={entry.stopTick} onChange={(e) => onTickChange(day, 'stop', e.target.checked)} className={tickInputStyles.replace('h-3 w-3','h-4 w-4')}/>
+                            </div>
+                        </div>
+                        <div className="flex items-center justify-between">
+                            <label className="text-sm font-medium">Regreso:</label>
+                            <div className="flex items-center gap-2">
+                                <input type="time" value={entry.comeback} onChange={(e) => onTimeChange(day, 'comeback', e.target.value)} className={timeInputStyles.replace('w-16','w-24')} />
+                                <input type="checkbox" checked={entry.comebackTick} onChange={(e) => onTickChange(day, 'comeback', e.target.checked)} className={tickInputStyles.replace('h-3 w-3','h-4 w-4')}/>
+                            </div>
+                        </div>
+                    </>
+                )}
                 <div className="flex items-center justify-between">
                     <label className="text-sm font-medium">Salida:</label>
                     <div className="flex items-center gap-2">

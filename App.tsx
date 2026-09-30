@@ -23,6 +23,7 @@ const timeToMinutes = (time: string): number => {
 const App: React.FC = () => {
     const [workers, setWorkers] = useLocalStorage<Worker[]>('agoin-workers', []);
     const [selectedWorkerId, setSelectedWorkerId] = useState<string | null>(null);
+    const [editingWorkerId, setEditingWorkerId] = useState<string | null>(null);
     
     const today = new Date();
     const [selectedDate, setSelectedDate] = useState({ month: today.getMonth(), year: today.getFullYear() });
@@ -34,6 +35,7 @@ const App: React.FC = () => {
 
 
     const selectedWorker = useMemo(() => workers.find(w => w.id === selectedWorkerId), [workers, selectedWorkerId]);
+    const selectedWorkerHasBreak = selectedWorker?.hasBreak !== false;
 
     const calculateHours = useCallback((entry: Partial<LogEntry>): number => {
         const entryTime = timeToMinutes(entry.entry || '');
@@ -42,20 +44,36 @@ const App: React.FC = () => {
         const exitTime = timeToMinutes(entry.exit || '');
 
         let ordinaryHours = 0;
-        if (stopTime > entryTime && exitTime > comebackTime) {
+        const hasBreakWindow = Boolean(entry.stop && entry.comeback);
+
+        if (hasBreakWindow && stopTime > entryTime && exitTime > comebackTime) {
             const morningMinutes = stopTime - entryTime;
             const afternoonMinutes = exitTime - comebackTime;
             ordinaryHours = (morningMinutes + afternoonMinutes) / 60;
+        } else if (!hasBreakWindow && exitTime > entryTime) {
+            ordinaryHours = (exitTime - entryTime) / 60;
         }
         return Math.round(ordinaryHours * 100) / 100;
     }, []);
 
     const effectiveStandardTimes = useMemo(() => {
+        const hasCustomWorkerSchedule = Boolean(selectedWorker && (
+            selectedWorker.standardEntry !== undefined ||
+            selectedWorker.standardStop !== undefined ||
+            selectedWorker.standardComeback !== undefined ||
+            selectedWorker.standardExit !== undefined ||
+            selectedWorker.hasBreak === false
+        ));
+
+        if (!selectedWorker || !hasCustomWorkerSchedule) {
+            return STANDARD_TIMES;
+        }
+
         return {
-            entry: selectedWorker?.standardEntry || STANDARD_TIMES.entry,
-            stop: selectedWorker?.standardStop || STANDARD_TIMES.stop,
-            comeback: selectedWorker?.standardComeback || STANDARD_TIMES.comeback,
-            exit: selectedWorker?.standardExit || STANDARD_TIMES.exit,
+            entry: selectedWorker.standardEntry ?? STANDARD_TIMES.entry,
+            stop: selectedWorker.hasBreak === false ? '' : (selectedWorker.standardStop ?? STANDARD_TIMES.stop),
+            comeback: selectedWorker.hasBreak === false ? '' : (selectedWorker.standardComeback ?? STANDARD_TIMES.comeback),
+            exit: selectedWorker.standardExit ?? STANDARD_TIMES.exit,
         };
     }, [selectedWorker]);
 
@@ -108,10 +126,10 @@ const App: React.FC = () => {
                  const filledEntry = {
                     ...entryData,
                     ...effectiveStandardTimes,
-                    entryTick: true,
-                    stopTick: true,
-                    comebackTick: true,
-                    exitTick: true,
+                    entryTick: Boolean(effectiveStandardTimes.entry),
+                    stopTick: Boolean(effectiveStandardTimes.stop),
+                    comebackTick: Boolean(effectiveStandardTimes.comeback),
+                    exitTick: Boolean(effectiveStandardTimes.exit),
                 };
                 entryData = {
                     ...filledEntry,
@@ -125,10 +143,10 @@ const App: React.FC = () => {
                 const comebackTime = timeToMinutes(effectiveStandardTimes.comeback);
                 const exitTime = timeToMinutes(effectiveStandardTimes.exit);
 
-                const entryTick = currentTimeInMinutes >= entryTime;
-                const stopTick = currentTimeInMinutes >= stopTime;
-                const comebackTick = currentTimeInMinutes >= comebackTime;
-                const exitTick = currentTimeInMinutes >= exitTime;
+                const entryTick = Boolean(effectiveStandardTimes.entry) && currentTimeInMinutes >= entryTime;
+                const stopTick = Boolean(effectiveStandardTimes.stop) && currentTimeInMinutes >= stopTime;
+                const comebackTick = Boolean(effectiveStandardTimes.comeback) && currentTimeInMinutes >= comebackTime;
+                const exitTick = Boolean(effectiveStandardTimes.exit) && currentTimeInMinutes >= exitTime;
                 
                 const partiallyFilledEntry = {
                     ...entryData,
@@ -224,10 +242,10 @@ const App: React.FC = () => {
                         const filledEntry = {
                              ...newEntry,
                             ...effectiveStandardTimes,
-                            entryTick: true,
-                            stopTick: true,
-                            comebackTick: true,
-                            exitTick: true,
+                            entryTick: Boolean(effectiveStandardTimes.entry),
+                            stopTick: Boolean(effectiveStandardTimes.stop),
+                            comebackTick: Boolean(effectiveStandardTimes.comeback),
+                            exitTick: Boolean(effectiveStandardTimes.exit),
                         };
                          Object.assign(newEntry, {
                             ...filledEntry,
@@ -357,7 +375,14 @@ const App: React.FC = () => {
                     onClear={clearLog}
                     onDownloadPdf={handleDownloadPdf}
                     isDownloadingPdf={isDownloadingPdf}
-                    onManageWorkers={() => setIsWorkerManagerOpen(true)}
+                    onManageWorkers={() => {
+                        setEditingWorkerId(selectedWorkerId);
+                        setIsWorkerManagerOpen(true);
+                    }}
+                    onAddWorker={() => {
+                        setEditingWorkerId(null);
+                        setIsWorkerManagerOpen(true);
+                    }}
                     includeSignature={includeSignature}
                     onIncludeSignatureChange={setIncludeSignature}
                 />
@@ -373,6 +398,7 @@ const App: React.FC = () => {
                     <CalendarView 
                         logData={logData}
                         selectedDate={selectedDate}
+                        showBreakFields={selectedWorkerHasBreak}
                         onToggleDay={toggleDay}
                         onTimeChange={handleTimeChange}
                         onTickChange={handleTickChange}
@@ -390,6 +416,7 @@ const App: React.FC = () => {
                 setWorkers={setWorkers}
                 isOpen={isWorkerManagerOpen}
                 onClose={() => setIsWorkerManagerOpen(false)}
+                initialSelectedWorkerId={editingWorkerId}
             />
 
             {/* --- PDF/PRINT SECTION --- */}
@@ -409,6 +436,7 @@ const App: React.FC = () => {
                             <LogTable 
                                 logData={logData} 
                                 totalHours={totalHours}
+                                showBreakFields={selectedWorkerHasBreak}
                                 workerSignature={includeSignature ? selectedWorker.signature : undefined} 
                             />
                         </div>
