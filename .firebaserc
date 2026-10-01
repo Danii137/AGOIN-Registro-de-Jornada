@@ -1,5 +1,20 @@
 {
   "projects": {
     "default": "agoin-registro-de-jornada"
+  },
+  "targets": {
+    "agoin-registro-de-jornada": {
+      "hosting": {
+        "agoin": [
+          "agoin-registro-de-jornada"
+        ],
+        "possibility": [
+          "possibility-registro-jornada"
+        ],
+        "bios": [
+          "bios-registro-jornada"
+        ]
+      }
+    }
   }
 }

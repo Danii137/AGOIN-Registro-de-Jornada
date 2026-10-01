@@ -9,7 +9,8 @@ import WorkerManager from './components/WorkerManager';
 import ReportInfo from './components/ReportInfo';
 import useLocalStorage from './hooks/useLocalStorage';
 import type { Worker, LogEntry } from './types';
-import { STANDARD_TIMES, AGOIN_LOGO_BASE64, isWorkDay } from './constants';
+import { STANDARD_TIMES, isWorkDay } from './constants';
+import { BRAND } from './brand';
 
 declare const html2canvas: any;
 declare const jspdf: any;
@@ -446,7 +447,11 @@ const App: React.FC = () => {
                             </div>
                             <div className="flex justify-between items-end">
                                 <div className="w-1/4">
-                                    <img src={AGOIN_LOGO_BASE64} alt="Logo AGOIN" className="h-10" />
+                                    {BRAND.logo ? (
+                                        <img src={BRAND.logo} alt={`Logo ${BRAND.name}`} className="h-10" />
+                                    ) : (
+                                        <p className="text-sm font-bold tracking-wider uppercase whitespace-nowrap">{BRAND.name}</p>
+                                    )}
                                 </div>
                                 <div className="w-3/4 flex justify-end gap-12 text-sm">
                                     <div className="text-center">

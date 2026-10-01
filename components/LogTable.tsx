@@ -20,7 +20,7 @@ const LogTable: React.FC<LogTableProps> = ({ logData, totalHours, showBreakField
     <div className="bg-white p-4 print-container">
       <div className="overflow-x-auto print:overflow-visible">
         <table className="min-w-full divide-y divide-gray-200 print-table text-black">
-          <thead className="bg-[#1B5E4B] text-white">
+          <thead className="bg-agoin-green text-white">
             <tr>
               <th className="px-1 py-2 text-center text-xs font-medium uppercase tracking-wider">Dia</th>
               <th className="px-2 py-2 text-center text-xs font-medium uppercase tracking-wider">Entrada</th>

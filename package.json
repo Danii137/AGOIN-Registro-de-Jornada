@@ -5,7 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:bios": "vite --mode bios",
+    "dev:possibility": "vite --mode possibility",
     "build": "vite build",
+    "build:bios": "vite build --mode bios",
+    "build:possibility": "vite build --mode possibility",
     "preview": "vite preview"
   },
   "dependencies": {

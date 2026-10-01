@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Worker } from '../types';
+import { BRAND } from '../brand';
 
 interface ReportInfoProps {
   selectedWorker: Worker | undefined;
@@ -31,8 +32,8 @@ const ReportInfo: React.FC<ReportInfoProps> = ({ selectedWorker, selectedDate, m
           </div>
        )}
       <div className={`grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 text-sm ${isPdfMode ? '!grid-cols-2 !gap-2' : ''}`}>
-        <div className={infoBoxStyles}><strong>Empresa:</strong> AGOIN</div>
-        <div className={infoBoxStyles}><strong>CIF:</strong> B45871340</div>
+        <div className={infoBoxStyles}><strong>Empresa:</strong> {BRAND.name}</div>
+        <div className={infoBoxStyles}><strong>CIF:</strong> {BRAND.cif}</div>
         <div className={infoBoxStyles}><strong>Trabajador:</strong> {selectedWorker?.name ?? 'N/A'}</div>
         <div className={infoBoxStyles}><strong>DNI:</strong> {selectedWorker?.dni ?? 'N/A'}</div>
         <div className={infoBoxStyles}><strong>Nº horas según contrato:</strong> {selectedWorker?.contractHours ?? 'N/A'}</div>
